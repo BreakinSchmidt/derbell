@@ -1,3 +1,4 @@
+using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -48,6 +49,7 @@ public partial class App : System.Windows.Application
             }
 
             _shutdownSignal = new EventWaitHandle(false, EventResetMode.AutoReset, ShutdownSignalName);
+            _shutdownSignal.Reset(); // Clear any stale signaled state from prior shutdowns before registering wait
             ThreadPool.RegisterWaitForSingleObject(
                 _shutdownSignal,
                 (_, _) => Dispatcher.BeginInvoke(() => Shutdown(0)),
@@ -55,6 +57,28 @@ public partial class App : System.Windows.Application
                 -1,
                 executeOnlyOnce: true);
         }
+
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+        {
+            try
+            {
+                string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Derbell");
+                Directory.CreateDirectory(dir);
+                File.AppendAllText(Path.Combine(dir, "crash.log"), $"[{DateTime.UtcNow:O}] UnhandledException: {args.ExceptionObject}\n");
+            }
+            catch { }
+        };
+
+        DispatcherUnhandledException += (_, args) =>
+        {
+            try
+            {
+                string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Derbell");
+                Directory.CreateDirectory(dir);
+                File.AppendAllText(Path.Combine(dir, "crash.log"), $"[{DateTime.UtcNow:O}] DispatcherUnhandledException: {args.Exception}\n");
+            }
+            catch { }
+        };
 
         _config = AppConfig.Load();
         _haClient = new HomeAssistantClient(_config);
