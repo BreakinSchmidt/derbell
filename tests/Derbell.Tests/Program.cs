@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.IO;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Interop;
@@ -384,5 +385,15 @@ public static class Program
         // Verify zero-click start sample (sample 0 is 0)
         short firstLeft = BitConverter.ToInt16(wav, 44);
         AssertEqual((short)0, firstLeft, "First sample must start at 0 amplitude to prevent speaker click");
+
+        // Verify extended duration (at least 2.5 seconds at 44.1kHz 16-bit stereo)
+        const int sampleRate = 44100;
+        const int bytesPerSamplePoint = 4; // 16-bit stereo = 2 * 2 bytes
+        double durationSeconds = (wav.Length - 44) / (double)(sampleRate * bytesPerSamplePoint);
+        AssertTrue(durationSeconds >= 2.5, $"Chime duration must be extended (actual: {durationSeconds:F2}s)");
+
+        // Save preview WAV for verification
+        string previewPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "doorbell_preview.wav");
+        File.WriteAllBytes(previewPath, wav);
     }
 }

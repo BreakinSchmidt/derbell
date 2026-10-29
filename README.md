@@ -20,7 +20,7 @@
   - Dynamically routes alerts to the specific camera where a person was detected and switches feeds seamlessly if a second camera triggers.
 
 - 🔔 **Classic "Ding-Dong" Doorbell Sound**:
-  - In-memory synthesized two-tone tubular bell chime (`E5 -> C5`, ~950ms) with rich harmonic overtones and zero click transients.
+  - In-memory synthesized two-tone electro-mechanical chime (`E5 -> C5`, ~2.85s) with authentic Euler-Bernoulli inharmonic bar modes, plunger strike transient, natural ~1.6Hz acoustic beating, and residential foyer reverberation.
   - Configurable toggle, volume slider, and live preview in Settings. Zero external `.wav` files required.
 
 - ⚡ **Low-Latency WebRTC Video Streaming**:
