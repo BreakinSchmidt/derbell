@@ -1,0 +1,467 @@
+<Window x:Class="Derbell.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Derbell — Nest Camera Popup Settings"
+        Width="700"
+        Height="760"
+        WindowStartupLocation="CenterScreen"
+        Background="#0F172A"
+        Foreground="#F8FAFC"
+        FontFamily="Segoe UI">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#E2E8F0" />
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#1E293B" />
+            <Setter Property="Foreground" Value="#F8FAFC" />
+            <Setter Property="BorderBrush" Value="#475569" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="CaretBrush" Value="#38BDF8" />
+        </Style>
+        <Style TargetType="PasswordBox">
+            <Setter Property="Background" Value="#1E293B" />
+            <Setter Property="Foreground" Value="#F8FAFC" />
+            <Setter Property="BorderBrush" Value="#475569" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="FontSize" Value="12.5" />
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#E2E8F0" />
+            <Setter Property="FontSize" Value="12.5" />
+            <Setter Property="Margin" Value="0,4,0,4" />
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Text="Derbell Configuration"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           Foreground="#F8FAFC" />
+                <TextBlock Text="Gaming-safe multi-camera Nest popup using built-in Nest Person Detection (camera_person)"
+                           FontSize="12"
+                           Foreground="#94A3B8"
+                           Margin="0,2,0,0" />
+            </StackPanel>
+
+            <Border x:Name="ConnectionBadgeBorder"
+                    Grid.Column="1"
+                    Background="#1E293B"
+                    BorderBrush="#334155"
+                    BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="12,6"
+                    VerticalAlignment="Center">
+                <TextBlock x:Name="ConnectionStatusText"
+                           Text="HA: Disconnected"
+                           FontWeight="SemiBold"
+                           Foreground="#F87171" />
+            </Border>
+        </Grid>
+
+        <!-- Scrollable Settings Sections -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+            <StackPanel>
+
+                <!-- SECTION 1: Home Assistant & Multi-Camera Selection -->
+                <Border Background="#1E293B"
+                        BorderBrush="#334155"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,14">
+                    <StackPanel>
+                        <TextBlock Text="1. Home Assistant &amp; Nest Cameras"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Foreground="#38BDF8"
+                                   Margin="0,0,0,10" />
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Home Assistant URL:" />
+                            <TextBox x:Name="HaUrlTextBox"
+                                     Grid.Column="1"
+                                     ToolTip="Example: http://homeassistant.local:8123 or https://your-ha.duckdns.org" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Long-Lived Access Token:" />
+                            <PasswordBox x:Name="AccessTokenBox"
+                                         Grid.Column="1"
+                                         ToolTip="Create in Home Assistant Profile -> Security -> Long-Lived Access Tokens" />
+                            <Button x:Name="ConnectDiscoverButton"
+                                    Grid.Column="2"
+                                    Content="Connect &amp; Discover Cameras"
+                                    Margin="8,0,0,0"
+                                    Padding="12,5"
+                                    Background="#0284C7"
+                                    Foreground="White"
+                                    FontWeight="SemiBold"
+                                    BorderThickness="0"
+                                    Click="ConnectDiscoverButton_Click" />
+                        </Grid>
+
+                        <!-- Multi-Camera Checklist -->
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Monitored Cameras (check all cameras that should trigger popups):"
+                                       FontWeight="SemiBold"
+                                       Foreground="#E2E8F0" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Select All"
+                                        Padding="8,2"
+                                        Margin="0,0,6,0"
+                                        FontSize="11"
+                                        Background="#334155"
+                                        Foreground="#E2E8F0"
+                                        BorderThickness="0"
+                                        Click="SelectAllCameras_Click" />
+                                <Button Content="Clear"
+                                        Padding="8,2"
+                                        FontSize="11"
+                                        Background="#334155"
+                                        Foreground="#E2E8F0"
+                                        BorderThickness="0"
+                                        Click="ClearAllCameras_Click" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Background="#0F172A"
+                                BorderBrush="#475569"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                MinHeight="105"
+                                MaxHeight="165"
+                                Padding="8">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ItemsControl x:Name="CamerasChecklist">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}"
+                                                      Margin="2,4,2,4">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding FriendlyName}"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#F8FAFC" />
+                                                    <TextBlock Text="{Binding EntityId, StringFormat=' ({0})'}"
+                                                               Foreground="#94A3B8"
+                                                               FontSize="11.5" />
+                                                    <TextBlock Text="  • Built-in Nest Person Detector"
+                                                               Foreground="#22C55E"
+                                                               FontSize="11" />
+                                                </StackPanel>
+                                            </CheckBox>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+
+                        <!-- Manual Camera Add Row (for offline setup) -->
+                        <Grid Margin="0,8,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Add Camera Manually:"
+                                       FontSize="11.5"
+                                       Foreground="#94A3B8"
+                                       Margin="0,0,8,0" />
+                            <TextBox x:Name="ManualCameraEntityBox"
+                                     Grid.Column="1"
+                                     FontSize="11.5"
+                                     Padding="6,3"
+                                     ToolTip="Optional: type a camera entity ID like camera.front_yard and click Add" />
+                            <Button Content="+ Add Camera"
+                                    Grid.Column="2"
+                                    Margin="8,0,0,0"
+                                    Padding="10,3"
+                                    FontSize="11.5"
+                                    Background="#334155"
+                                    Foreground="#E2E8F0"
+                                    BorderThickness="0"
+                                    Click="AddManualCamera_Click" />
+                        </Grid>
+
+                        <TextBlock x:Name="DiscoveryFeedbackText"
+                                   Text="Uses built-in Google Nest Person Detection (camera_person) automatically for each checked camera."
+                                   FontSize="11.5"
+                                   Foreground="#22C55E"
+                                   Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- SECTION 2: Monitor & Screen Position -->
+                <Border Background="#1E293B"
+                        BorderBrush="#334155"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16"
+                        Margin="0,0,0,14">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="2. Monitor &amp; Popup Position"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Foreground="#38BDF8" />
+                            <Button Content="Preview &amp; Drag Position on Screen"
+                                    Grid.Column="1"
+                                    Padding="10,4"
+                                    Background="#334155"
+                                    Foreground="#38BDF8"
+                                    FontWeight="SemiBold"
+                                    BorderThickness="0"
+                                    Click="PreviewPlacementButton_Click" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Target Monitor:" />
+                            <ComboBox x:Name="MonitorCombo"
+                                      Grid.Column="1"
+                                      Padding="6,4" />
+                            <Button Content="Refresh"
+                                    Grid.Column="2"
+                                    Margin="8,0,0,0"
+                                    Padding="10,4"
+                                    Background="#334155"
+                                    Foreground="#E2E8F0"
+                                    BorderThickness="0"
+                                    Click="RefreshMonitorsButton_Click" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Corner Preset:" />
+                            <ComboBox x:Name="PositionPresetCombo"
+                                      Grid.Column="1"
+                                      Padding="6,4"
+                                      SelectionChanged="PositionPresetCombo_SelectionChanged" />
+                            <TextBlock Grid.Column="2"
+                                       Text="Edge Margin (px):"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,8,0" />
+                            <TextBox x:Name="EdgeMarginBox" Grid.Column="3" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Size &amp; Custom Offset:" />
+                            <StackPanel Grid.Column="1" Margin="0,0,6,0">
+                                <TextBlock Text="Width (px)" FontSize="11" Foreground="#94A3B8" />
+                                <TextBox x:Name="WidthBox" Margin="0,2,0,0" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,0,6,0">
+                                <TextBlock Text="Height (px)" FontSize="11" Foreground="#94A3B8" />
+                                <TextBox x:Name="HeightBox" Margin="0,2,0,0" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="3" Margin="0,0,6,0">
+                                <TextBlock Text="Custom X" FontSize="11" Foreground="#94A3B8" />
+                                <TextBox x:Name="CustomXBox" Margin="0,2,0,0" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="4">
+                                <TextBlock Text="Custom Y" FontSize="11" Foreground="#94A3B8" />
+                                <TextBox x:Name="CustomYBox" Margin="0,2,0,0" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- SECTION 3: Gaming, Input & Presence Behavior -->
+                <Border Background="#1E293B"
+                        BorderBrush="#334155"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="16">
+                    <StackPanel>
+                        <TextBlock Text="3. Gaming Mode, Presence Timeout &amp; Hotkeys"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Foreground="#38BDF8"
+                                   Margin="0,0,0,10" />
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="240" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Hide After No Person Activity (sec):" />
+                            <TextBox x:Name="AbsenceTimeoutBox" Grid.Column="1" />
+                            <TextBlock Grid.Column="2"
+                                       Text="Keeps popup visible while person stays in view"
+                                       FontSize="11.5"
+                                       Foreground="#94A3B8"
+                                       Margin="10,0,0,0" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="240" />
+                                <ColumnDefinition Width="90" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Manual Dismiss Cooldown (sec):" />
+                            <TextBox x:Name="CooldownBox" Grid.Column="1" />
+                            <TextBlock Grid.Column="2"
+                                       Text="Prevents immediate re-popup after clicking Hide"
+                                       FontSize="11.5"
+                                       Foreground="#94A3B8"
+                                       Margin="10,0,0,0" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="240" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Global Dismiss Hotkey:" />
+                            <TextBox x:Name="HotkeyBox" Grid.Column="1" />
+                            <TextBlock Grid.Column="2"
+                                       Text="Dismisses popup mid-game (e.g. Ctrl+Shift+X)"
+                                       FontSize="11.5"
+                                       Foreground="#94A3B8"
+                                       Margin="10,0,0,0" />
+                        </Grid>
+
+                        <CheckBox x:Name="PlayChimeCheckBox"
+                                  Content="Play a doorbell sound (Ding-Dong) when a person appears on camera" />
+
+                        <Grid Margin="22,2,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="180" />
+                                <ColumnDefinition Width="48" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Doorbell Volume:"
+                                       FontSize="12"
+                                       Foreground="#94A3B8"
+                                       Margin="0,0,10,0" />
+                            <Slider x:Name="ChimeVolumeSlider"
+                                    Grid.Column="1"
+                                    Minimum="5"
+                                    Maximum="100"
+                                    Value="85"
+                                    TickFrequency="5"
+                                    IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center"
+                                    ValueChanged="ChimeVolumeSlider_ValueChanged" />
+                            <TextBlock x:Name="ChimeVolumeText"
+                                       Grid.Column="2"
+                                       Text="85%"
+                                       FontSize="12"
+                                       Foreground="#E2E8F0"
+                                       Margin="8,0,8,0" />
+                            <Button Grid.Column="3"
+                                    Content="🔊 Preview Doorbell"
+                                    Padding="10,3"
+                                    FontSize="11.5"
+                                    Background="#334155"
+                                    Foreground="#38BDF8"
+                                    FontWeight="SemiBold"
+                                    BorderThickness="0"
+                                    Click="PreviewChimeButton_Click" />
+                        </Grid>
+
+                        <CheckBox x:Name="MutedCheckBox"
+                                  Content="Mute camera audio by default when popup appears" />
+                        <CheckBox x:Name="ClickThroughCheckBox"
+                                  Content="Click-Through Mode (mouse clicks pass right through the popup to your game; use Hotkey to hide)" />
+                        <CheckBox x:Name="KeepWarmCheckBox"
+                                  Content="Keep WebRTC stream warm in background (instant &lt;100ms video; recommended only for wired cameras)" />
+                        <CheckBox x:Name="RunAtStartupCheckBox"
+                                  Content="Start Derbell automatically when Windows starts" />
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer Buttons -->
+        <Grid Grid.Row="2" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Content="Test Popup Now"
+                    Grid.Column="0"
+                    Padding="14,7"
+                    Background="#334155"
+                    Foreground="#38BDF8"
+                    FontWeight="SemiBold"
+                    BorderThickness="0"
+                    Click="TestPopupButton_Click" />
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Content="Cancel"
+                        Padding="16,7"
+                        Margin="0,0,10,0"
+                        Background="#334155"
+                        Foreground="#E2E8F0"
+                        BorderThickness="0"
+                        Click="CancelButton_Click" />
+                <Button Content="Save &amp; Apply"
+                        Padding="20,7"
+                        Background="#22C55E"
+                        Foreground="#0F172A"
+                        FontWeight="Bold"
+                        BorderThickness="0"
+                        Click="SaveButton_Click" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

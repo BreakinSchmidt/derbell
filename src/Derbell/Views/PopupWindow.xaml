@@ -1,0 +1,155 @@
+<Window x:Class="Derbell.Views.PopupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="Derbell Camera Popup"
+        Width="480"
+        Height="270"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        Topmost="True"
+        Focusable="False"
+        Background="#0F172A"
+        BorderBrush="#38BDF8"
+        BorderThickness="1.5">
+
+    <Grid Background="#0F172A">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Video / WebRTC Content Area -->
+        <Grid Grid.Row="1" Background="#090D16">
+            <!-- Fallback status text while WebView2 initializes -->
+            <StackPanel x:Name="PlaceholderPanel"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        IsHitTestVisible="False">
+                <TextBlock x:Name="StatusTitleText"
+                           Text="INITIALIZING STREAM ENGINE..."
+                           Foreground="#38BDF8"
+                           FontSize="14"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center" />
+                <TextBlock x:Name="StatusSubText"
+                           Text="Preparing WebRTC player..."
+                           Foreground="#94A3B8"
+                           FontSize="12"
+                           Margin="0,4,0,0"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <!-- Live WebRTC Stream Layer (WebView2) -->
+            <wv2:WebView2 x:Name="StreamWebView"
+                          Visibility="Visible" />
+
+            <!-- Interactive Placement Preview Overlay (Only visible when positioning from Settings) -->
+            <Border x:Name="PreviewOverlay"
+                    Visibility="Collapsed"
+                    Background="#E60F172A"
+                    Cursor="SizeAll"
+                    MouseLeftButtonDown="PreviewOverlay_MouseLeftButtonDown">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="PLACEMENT PREVIEW MODE"
+                               Foreground="#38BDF8"
+                               FontWeight="Bold"
+                               FontSize="14"
+                               HorizontalAlignment="Center" />
+                    <TextBlock Text="Drag this window to your desired spot on any monitor"
+                               Foreground="#E2E8F0"
+                               FontSize="12"
+                               Margin="0,6,0,12"
+                               HorizontalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Button Content="Save This Spot"
+                                Padding="12,5"
+                                Margin="0,0,8,0"
+                                Background="#22C55E"
+                                Foreground="#0F172A"
+                                FontWeight="SemiBold"
+                                BorderThickness="0"
+                                Click="SavePreviewPlacement_Click" />
+                        <Button Content="Cancel"
+                                Padding="12,5"
+                                Background="#334155"
+                                Foreground="#F8FAFC"
+                                BorderThickness="0"
+                                Click="CancelPreviewPlacement_Click" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Non-Activating Top HUD Bar -->
+        <Border Grid.Row="0"
+                Background="#1E293B"
+                BorderBrush="#334155"
+                BorderThickness="0,0,0,1"
+                Padding="10,0,6,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Live Status Dot + Badge -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Ellipse x:Name="LiveDot"
+                             Width="8"
+                             Height="8"
+                             Fill="#22C55E"
+                             Margin="0,0,7,0"
+                             VerticalAlignment="Center" />
+                    <TextBlock x:Name="CameraTitleText"
+                               Text="Nest Outdoor Cam — Person"
+                               Foreground="#F8FAFC"
+                               FontWeight="SemiBold"
+                               FontSize="12"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Stream Mode Indicator -->
+                <TextBlock x:Name="StreamModeBadge"
+                           Grid.Column="1"
+                           Text="CONNECTING"
+                           Foreground="#38BDF8"
+                           FontSize="10"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Right"
+                           Margin="0,0,10,0" />
+
+                <!-- Non-Activating Action Buttons -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button x:Name="MuteToggleButton"
+                            Content="🔇 Muted"
+                            Focusable="False"
+                            FontSize="11"
+                            Padding="7,2"
+                            Margin="0,0,6,0"
+                            Background="#334155"
+                            Foreground="#E2E8F0"
+                            BorderThickness="0"
+                            ToolTip="Toggle audio mute (does not steal window focus)"
+                            Click="MuteToggleButton_Click" />
+
+                    <Button x:Name="HideButton"
+                            Content="✕ Hide"
+                            Focusable="False"
+                            FontSize="11"
+                            FontWeight="SemiBold"
+                            Padding="8,2"
+                            Background="#EF4444"
+                            Foreground="White"
+                            BorderThickness="0"
+                            ToolTip="Hide camera popup (does not steal window focus)"
+                            Click="HideButton_Click" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
